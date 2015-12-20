@@ -53,8 +53,11 @@ class Population:
                     loc=self.reproductivity_loc,
                     scale=self.reproductivity_std,
                     size=1)*number_of_old)[0])
+
         self.number_of_individuals += number_of_new
-        self.individuals.resize(number_of_old+number_of_new,self.number_of_phenos)
+        self.individuals.resize(
+                number_of_old+number_of_new,
+                self.number_of_phenos)
 
         for i in range(0, self.number_of_phenos):
             self.individuals[number_of_old:,i] = np.random.normal(
@@ -62,13 +65,18 @@ class Population:
                     scale=self.pheno_types[i].spread,
                     size=number_of_new)
 
+        self.individuals[individuals > 1] = 1
+        self.individuals[individuals < 0] = 0
+
 if __name__ == '__main__':
 
     A = Population()
-    #A.add_pheno_type(0.1,1,1)
-    A.add_pheno_type(0.0132,1,1)
+    A.add_pheno_type(0.1,1,1)
+    #A.add_pheno_type(0.0132,1,1)
     A.initialize_population (100000,0.5,0.1)
-    A.reproduction()
+    for i in range(0,100):
+        print(i)
+        A.reproduction()
 
     fig, ax = plt.subplots(1,1)
     ax.hist(A.individuals[:,0],bins=100)
