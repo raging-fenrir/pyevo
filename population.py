@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy as np
 
 class Population:
@@ -24,29 +25,51 @@ class Population:
                 initial_distriubtion)
         self.pheno_types.append(pheno)
     
-    def initialize_population (self, initial_number):
-
+    def initialize_population (self, initial_number, reproductivity_loc,
+            reproductivity_std):
+    
+        self.number_of_individuals = initial_number
+        self.reproductivity_loc = reproductivity_loc
+        self.reproductivity_std = reproductivity_std
         number_of_phenos = len(self.pheno_types)
-        self.individuals = np.zeros((initial_number,number_of_phenos)) 
+        individuals = np.zeros((initial_number,number_of_phenos)) 
+
         for i in range(0,number_of_phenos):
-            self.individuals[:,i] = np.random.binomial(
-                    n=self.pheno_types[i].spread,
-                    p=0.5,
-                    size=initial_number)/self.pheno_types[i].spread
+            individuals[:,i] = np.random.normal(
+                    loc=0.5,
+                    scale=self.pheno_types[i].spread,
+                    size=initial_number)
+
+        individuals[individuals > 1] = 1
+        individuals[individuals < 0] = 0
+        self.individuals = individuals
+        self.number_of_phenos = number_of_phenos
 
     def reproduction(self):
-        
-        
 
+        number_of_old = self.number_of_individuals 
+        number_of_new = int(np.floor(
+                np.random.normal(
+                    loc=self.reproductivity_loc,
+                    scale=self.reproductivity_std,
+                    size=1)*number_of_old)[0])
+        self.number_of_individuals += number_of_new
+        self.individuals.resize(number_of_old+number_of_new,self.number_of_phenos)
+
+        for i in range(0, self.number_of_phenos):
+            self.individuals[number_of_old:,i] = np.random.normal(
+                    loc=0.5,
+                    scale=self.pheno_types[i].spread,
+                    size=number_of_new)
 
 if __name__ == '__main__':
+
     A = Population()
-    A.add_pheno_type(10,1,1)
-    A.add_pheno_type(100,2,2)
-    A.add_pheno_type(1000,3,3)
-    A.add_pheno_type(10000,4,4)
-    A.add_pheno_type(100000,5,5)
-    A.initialize_population (10)
-    #print(A.individuals)
-    #for i in A.pheno_types:
-    #    print(i.my_ID)
+    #A.add_pheno_type(0.1,1,1)
+    A.add_pheno_type(0.0132,1,1)
+    A.initialize_population (100000,0.5,0.1)
+    A.reproduction()
+
+    fig, ax = plt.subplots(1,1)
+    ax.hist(A.individuals[:,0],bins=100)
+    plt.show()
