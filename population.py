@@ -1,25 +1,24 @@
-import matplotlib.pyplot as plt
 import numpy as np
 
 class Population:
 
     class phenoType:
-        ID = 0
-        def __init__(self, spread, attractiveness, initial_distribution):
 
-            self.my_ID = Population.phenoType.ID
+        def __init__(self, ID, spread, attractiveness, initial_distribution):
+
+            self.my_ID = ID
             self.spread = spread
             self.attractiveness = attractiveness
             self.initial_distribution = initial_distribution
-            Population.phenoType.ID += 1
             
     def __init__(self):
 
         self.pheno_types = []
     
-    def add_pheno_type(self, spread, attractiveness, initial_distriubtion):
+    def add_pheno_type(self, ID, spread, attractiveness, initial_distriubtion):
 
         pheno = Population.phenoType(
+                ID,
                 spread, 
                 attractiveness, 
                 initial_distriubtion)
@@ -65,19 +64,20 @@ class Population:
                     scale=self.pheno_types[i].spread,
                     size=number_of_new)
 
-        self.individuals[individuals > 1] = 1
-        self.individuals[individuals < 0] = 0
+        self.individuals[self.individuals > 1] = 1
+        self.individuals[self.individuals < 0] = 0
 
-if __name__ == '__main__':
-
-    A = Population()
-    A.add_pheno_type(0.1,1,1)
-    #A.add_pheno_type(0.0132,1,1)
-    A.initialize_population (100000,0.5,0.1)
-    for i in range(0,100):
-        print(i)
-        A.reproduction()
-
-    fig, ax = plt.subplots(1,1)
-    ax.hist(A.individuals[:,0],bins=100)
-    plt.show()
+#if __name__ == '__main__':
+#
+#    A = Population()
+#    A.add_pheno_type(0.1,1,1)
+#    #A.add_pheno_type(0.0132,1,1)
+#    A.initialize_population (100000,0.5,0.1)
+#    for i in range(0,100):
+#        print(i)
+#        print(np.size(A.individuals))
+#        A.reproduction()
+#
+#    fig, ax = plt.subplots(1,1)
+#    ax.hist(A.individuals[:,0],bins=100)
+#    plt.show()

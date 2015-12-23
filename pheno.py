@@ -1,8 +1,10 @@
 class PhenoType:
 
-    def __init__(self, name, ID):
+    ID = 0
+    def __init__(self, name):
         self.name = name
-        self.ID = ID
+        self.my_ID = PhenoType.ID
+        PhenoType.ID += 1
 
     def getID(self):
         return ID 
