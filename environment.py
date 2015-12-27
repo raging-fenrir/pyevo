@@ -6,6 +6,7 @@ class Environment:
     class phenoType:
 
         def __init__ (self, environment_weight, resource_weight):
+            self.my_ID = ID
             self.environment_weight = envi_weight
             self.resource_weight = resource_weight
     

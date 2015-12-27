@@ -23,7 +23,7 @@ class Population:
                 attractiveness, 
                 initial_distriubtion)
         self.pheno_types.append(pheno)
-    
+     
     def initialize_population (self, initial_number, reproductivity_loc,
             reproductivity_std):
     
@@ -34,13 +34,19 @@ class Population:
         individuals = np.zeros((initial_number,number_of_phenos)) 
 
         for i in range(0,number_of_phenos):
-            individuals[:,i] = np.random.normal(
-                    loc=0.5,
-                    scale=self.pheno_types[i].spread,
-                    size=initial_number)
+            temp_phenos = []
+            for j in range(0,len(individuals[:,i])):
+                dist_number = -1
+                while dist_number > 1 or dist_number < 0:
+                    dist_number = np.random.normal(
+                            loc=0.5,
+                            scale=self.pheno_types[i].spread,
+                            size=1)
+                temp_phenos.append(dist_number)
 
-        individuals[individuals > 1] = 1
-        individuals[individuals < 0] = 0
+            
+            individuals[:,i] = temp_phenos
+
         self.individuals = individuals
         self.number_of_phenos = number_of_phenos
 
@@ -55,14 +61,16 @@ class Population:
 
         self.number_of_individuals += number_of_new
         self.individuals.resize(
-                number_of_old+number_of_new,
+                self.number_of_individuals,
+                #number_of_old+number_of_new,
                 self.number_of_phenos)
 
         for i in range(0, self.number_of_phenos):
             self.individuals[number_of_old:,i] = np.random.normal(
-                    loc=0.5,
+                    loc=0.5+self.pheno_types[i].attractiveness,
                     scale=self.pheno_types[i].spread,
                     size=number_of_new)
+
 
         self.individuals[self.individuals > 1] = 1
         self.individuals[self.individuals < 0] = 0
